@@ -20,6 +20,34 @@ struct MyStringHash {
     HASH_INDEX_T operator()(const std::string& k) const
     {
         // Add your code here
+        std::vector<int> nums;
+        for(int i=k.size()-1; i>=0;i--){
+            nums.push_back(letterDigitToNumber(k.at(i)));
+        }
+        unsigned long long fin[5];
+        int numIdx=4;
+        int sub=0;
+        unsigned long long val=0;
+        for(int i=0; i < nums.size(); i++)
+        {
+            val += nums[i] * pow(36,i-sub);
+            if((i+1)%6==0){
+               fin[numIdx]=val;
+               val=0; 
+               numIdx--;
+               sub+=6;
+            }
+        }
+        while(numIdx>=0){
+            fin[numIdx]=val;
+            val=0;
+            numIdx--;
+        }
+        HASH_INDEX_T retVal=0;
+        for(int i=0; i<5;i++){
+            retVal+=fin[i]*rValues[i];
+        }
+        return retVal;
 
 
     }
@@ -27,8 +55,10 @@ struct MyStringHash {
     // A likely helper function is to convert a-z,0-9 to an integral value 0-35
     HASH_INDEX_T letterDigitToNumber(char letter) const
     {
-        // Add code here or delete this helper function if you do not want it
-
+      if(isupper(letter)){letter = tolower(letter);}
+      int num = letter - '0';
+      if(num>9){return letter - 'a';}
+      else{return num+26;}
     }
 
     // Code to generate the random R values
